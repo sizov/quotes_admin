@@ -4,7 +4,7 @@ require 'Slim/Slim.php';
 $app = new Slim();
 
 $app->get('/quote_origins', 'getQuoteOrigins');
-$app->get('/quotes', 'getQuotes');
+$app->get('/quote_origin/:origin_id', 'getQuotesByQuoteOriginId');
 
 $app->run();
 
@@ -21,18 +21,21 @@ function getQuoteOrigins() {
 	}
 }
 
-function getQuotes() {
-	$sql = "select * FROM quotes ORDER BY id";
+function getQuotesByQuoteOriginId($origin_id) {
+	$sql = "SELECT * FROM quotes WHERE origin_id=:origin_id";
 	try {
 		$db = getConnection();
-		$stmt = $db->query($sql);  
-		$qoutes = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$stmt = $db->prepare($sql);  
+		$stmt->bindParam("origin_id", $origin_id);
+		$stmt->execute();
+		//$quotes = $stmt->fetchObject();  
+		$quotes = $stmt->fetchAll(PDO::FETCH_OBJ);
 		$db = null;
-		echo json_encode($qoutes);
+		echo json_encode($quotes); 
 	} catch(PDOException $e) {
 		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
 	}
-}
+} 
 
 
 function getConnection() {
