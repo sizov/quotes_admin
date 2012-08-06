@@ -3,25 +3,52 @@
     font-size: 18px;
 }
 
-#header {
-    padding-top: 5px;
-}
-
 #sidebar {
     position: absolute;
     left: 10px;
-    top: 70px;
-    bottom: 20px;
+    top: 10px;
+    bottom: 50px;
     width: 260px;
     border: solid 1px #CCCCCC;
     overflow-y: scroll;
 }
 
-#content {
+#sidebarfooter {
+	position: absolute;
+    bottom: 10px;
+}
+
+#sidebardetails{
+    position: absolute;
+    left: 300px;
+    top: 10px;
+    height: 150px;
+}
+
+#contentlist{
+    position: absolute;
+    left: 300px;
+    top: 240px;
+    bottom: 120px;
+    width: 260px;
+    border: solid 1px #CCCCCC;
+    overflow-y: scroll;
+}
+
+#contentlistfooter{
+    position: absolute;
+    left: 300px;
+    bottom: 20px;
+    width: 260px;
+	height: 100px;
+}
+
+
+#content{
     position: absolute;
     top: 70px;
     bottom: 20px;
-    left: 300px;
+    left: 600px;
     right: 20px;
 }
 
