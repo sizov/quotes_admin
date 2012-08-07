@@ -82,7 +82,10 @@ window.QuoteListView = Backbone.View.extend({
 
     initialize:function () {
         this.model.bind("reset", this.render, this);
-		//this.render('test');
+		//this.model.bind("add", function{
+		//}, this);
+		//this.model.bind("remove", function{
+		//}, this);
     },
 
     render:function (eventName) {
@@ -97,13 +100,14 @@ window.QuoteListView = Backbone.View.extend({
 window.QuoteListItemView = Backbone.View.extend({
     tagName:"li",
 	
+	template:_.template($('#tpl-qoute-list-item').html()),
+	
 	initialize:function(){
+		this.model.bind("change", this.render, this);
 		this.render();
 	},
-
-    template:_.template($('#tpl-qoute-list-item').html()),
-
-    render:function (eventName) {
+	
+	render:function (eventName) {
         $(this.el).html(this.template(this.model.toJSON()));
         return this;
     }
@@ -123,30 +127,54 @@ window.QuoteActionsView = Backbone.View.extend({
 	},
 	
 	events:{
-		"click .save": "addQuote"
+		"click .add": "addQuote"
 	},
 	
-	addQuote:function(){
-		//if(app.selectedOriginModel) selectedOriginModel.close();
+	addQuote:function(){		
 		app.selectedQuoteModel = new QuoteModel();
-		app.quoteView = new QuoteView({model:app.selectedQuoteModel});
-        $('#content').html(app.quoteView.el);		
+		//if(app.quoteDetailsView) app.quoteDetailsView.close();
+		app.quoteDetailsView = new QuoteDetailsView({model:app.selectedQuoteModel});
+        $('#content').html(app.quoteDetailsView.el);		
 		return false;
 	}
 })
 
 //quote details view
-window.QuoteView = Backbone.View.extend({
+window.QuoteDetailsView = Backbone.View.extend({
     template:_.template($('#tpl-quote-details').html()),
 	
 	initialize:function(){
 		this.render('test');
 	},
-
-    render:function (eventName) {
+	
+	events:{
+		"click .save":"save"
+	},
+	
+	render:function (eventName) {
         $(this.el).html(this.template(this.model.toJSON()));
         return this;
-    }
+    },
+	
+	save:function (event){
+		this.model.set({
+			quote_text:$('#quoteText').val(),
+			language_id:$('#languageId').val(),
+			comments:$('#comments').val()
+		});
+	
+		//saving new model
+		if(this.model.isNew){
+			
+		}
+		
+		//saving existing quote details		
+		else{
+			//this.model.save();
+		}
+		
+		return false;
+	}    
 });
 
 
@@ -189,8 +217,8 @@ var AppRouter = Backbone.Router.extend({
 	
 	quoteDetailsByIdRoute:function (id) {
 		this.selectedQuoteModel = this.quotesCollection.get(id);
-        this.quoteView = new QuoteView({model:this.selectedQuoteModel});
-        $('#content').html(this.quoteView.el);
+        this.quoteDetailsView = new QuoteDetailsView({model:this.selectedQuoteModel});
+        $('#content').html(this.quoteDetailsView.el);
     }	
 	
 });

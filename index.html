@@ -24,7 +24,7 @@
 <!--------------->
 <script type="text/template" id="tpl-quote-actions">
 	<label>Quote:</label>
-	<button class="save">Add</button>
+	<button class="add">Add</button>
 </script>
 
 <script type="text/template" id="tpl-qoute_origins-list-item">	
@@ -41,22 +41,23 @@
 <script type="text/template" id="tpl-qoute-list-item">
 	<a href='#quoteDetails/<%= id %>'><%= quote_text %></a>
 </script>
-<!--------------->
 
 <script type="text/template" id="tpl-quote-details">
     <div class="form-left-col">
         <label>Id:</label>
-        <input type="text" id="wineId" name="id" value="<%= id %>" disabled />
+        <input type="text" id="quoteId" name="id" value="<%= id %>" disabled />
         <label>Quote text:</label>
-        <input type="text" id="name" name="name" value="<%= quote_text %>" required/>
+        <input type="text" id="quoteText" name="name" value="<%= quote_text %>" required/>
         <label>Language:</label>
-        <input type="text" id="grapes" name="grapes" value="<%= language_id %>"/>
+        <input type="text" id="languageId" name="grapes" value="<%= language_id %>"/>
+		<button class="save">Save</button>
     </div>
     <div class="form-right-col">
         <label>Comments:</label>
-        <textarea id="description" name="description"><%= comments %></textarea>
+        <textarea id="comments" name="description"><%= comments %></textarea>
     </div>
 </script>
+<!--------------->
 
 
 <!-- JavaScript -->
