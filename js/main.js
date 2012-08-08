@@ -6,22 +6,23 @@ window.QuoteOriginModel = Backbone.Model.extend();
 
 window.QuoteOriginsCollection = Backbone.Collection.extend({
     model:QuoteOriginModel,
-    url:"api/quote_origins"
+    url:"api/origins"
 });
 
 window.QuoteModel = Backbone.Model.extend({
+	//urlRoot:"api/quotes",
 	defaults:{
 		id:null,
-		quote_text:"XXX YYY",
+		quote_text:"XXX YYY ZZZ",
 		language_id:1,
 		comments:null
-	}
+	}	
 });
 
 window.QuotesCollection = Backbone.Collection.extend({
     model:QuoteModel,
 	url: function() {
-		return "api/quote_origin/" + this.origin_id;
+		return "api/quotes/" + this.origin_id; ??? how to resolve url for retrieving quotes per orogin and storing quote by id (suppose to be same)
 	}	
 });
 
@@ -163,14 +164,14 @@ window.QuoteDetailsView = Backbone.View.extend({
 			comments:$('#comments').val()
 		});
 	
-		//saving new model
-		if(this.model.isNew){
+		//creating new model
+		if(this.model.isNew()){
 			
 		}
 		
 		//saving existing quote details		
 		else{
-			//this.model.save();
+			this.model.save();
 		}
 		
 		return false;
@@ -185,12 +186,12 @@ window.QuoteDetailsView = Backbone.View.extend({
 var AppRouter = Backbone.Router.extend({
 
     routes:{
-        "":"quoteOriginsRoute",		
-        "originDetails/:origin_id":"originDetailsRoute",
-		"quoteDetails/:id":"quoteDetailsByIdRoute",
+        "":"originsRoute",		
+        "origins/:origin_id":"originDetailsRoute",
+		"quotes/:id":"quoteDetailsByIdRoute",
     },
 
-    quoteOriginsRoute:function () {
+    originsRoute:function () {
         this.quoteOriginsCollection = new QuoteOriginsCollection();
         this.quoteOriginsListView = new QuoteOriginsListView({model:this.quoteOriginsCollection});
         this.quoteOriginsCollection.fetch();
