@@ -27,7 +27,7 @@
 	<button class="add">Add</button>
 </script>
 
-<script type="text/template" id="tpl-qoute_origins-list-item">	
+<script type="text/template" id="tpl-origins-list-item">	
 	<a href='#origins/<%= id %>'><%= origin_text %></a>
 </script>
 
@@ -49,13 +49,13 @@
         <label>Quote text:</label>
         <input type="text" id="quoteText" name="name" value="<%= quote_text %>" required/>
         <label>Language:</label>
-        <input type="text" id="languageId" name="grapes" value="<%= language_id %>"/>
-		<button class="save">Save</button>
-    </div>
-    <div class="form-right-col">
+        <input type="text" id="languageId" name="grapes" value="<%= language_id %>"/>		
         <label>Comments:</label>
         <textarea id="comments" name="description"><%= comments %></textarea>
+		<button class="save">Save</button>
+		<button class="delete">Delete</button>
     </div>
+	
 </script>
 <!--------------->
 

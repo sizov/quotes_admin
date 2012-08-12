@@ -4,8 +4,10 @@ require 'Slim/Slim.php';
 $app = new Slim();
 
 $app->get('/origins', 'getQuoteOrigins');
-$app->get('/quotes/:origin_id', 'getQuotesByOriginId');  ??? how to resolve url for retrieving quotes per orogin and storing quote by id (suppose to be same)
+$app->get('/quotes', 'getQuotesByOriginId');
 $app->put('/quotes/:quote_id', 'updateQuoteById');
+$app->delete('/quotes/:quote_id',	'deleteQuoteById');
+$app->post('/quotes', 'createQuote');
 
 $app->run();
 
@@ -22,7 +24,10 @@ function getQuoteOrigins() {
 	}
 }
 
-function getQuotesByOriginId($origin_id) {
+function getQuotesByOriginId() {
+	$request = Slim::getInstance()->request();
+	$origin_id = $request->get('origin_id');
+
 	$sql = "SELECT * FROM quotes WHERE origin_id=:origin_id";
 	try {
 		$db = getConnection();
@@ -55,6 +60,40 @@ function updateQuoteById($quote_id) {
 		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
 	}
 }
+
+function deleteQuoteById($quote_id) {
+	$sql = "DELETE FROM quotes WHERE id=:id";
+	try {
+		$db = getConnection();
+		$stmt = $db->prepare($sql);  
+		$stmt->bindParam("id", $quote_id);
+		$stmt->execute();
+		$db = null;
+	} catch(PDOException $e) {
+		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+	}
+}
+
+function createQuote() {
+	$request = Slim::getInstance()->request();
+	$body = $request->getBody();
+	$quote = json_decode($body);
+	$sql = "INSERT INTO quotes (quote_text, language_id, origin_id) VALUES (:quote_text, :language_id, :origin_id)";
+	try {
+		$db = getConnection();
+		$stmt = $db->prepare($sql);  
+		$stmt->bindParam("quote_text", $quote->quote_text);
+		$stmt->bindParam("language_id", $quote->language_id);
+		$stmt->bindParam("origin_id", $quote->origin_id);
+		$stmt->execute();		
+		$quote->id = $db->lastInsertId();		
+		$db = null;
+		echo json_encode($quote); 
+	} catch(PDOException $e) {
+		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+	}
+}
+
 
 function getConnection() {
 	$dbhost="127.0.0.1";

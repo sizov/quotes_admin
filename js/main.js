@@ -2,15 +2,15 @@
 // Models
 //===================================================
 
-window.QuoteOriginModel = Backbone.Model.extend();
+window.OriginModel = Backbone.Model.extend();
 
-window.QuoteOriginsCollection = Backbone.Collection.extend({
-    model:QuoteOriginModel,
+window.OriginsCollection = Backbone.Collection.extend({
+    model:OriginModel,
     url:"api/origins"
 });
 
 window.QuoteModel = Backbone.Model.extend({
-	//urlRoot:"api/quotes",
+	urlRoot:"api/quotes",
 	defaults:{
 		id:null,
 		quote_text:"XXX YYY ZZZ",
@@ -21,9 +21,7 @@ window.QuoteModel = Backbone.Model.extend({
 
 window.QuotesCollection = Backbone.Collection.extend({
     model:QuoteModel,
-	url: function() {
-		return "api/quotes/" + this.origin_id; ??? how to resolve url for retrieving quotes per orogin and storing quote by id (suppose to be same)
-	}	
+	url: "api/quotes"
 });
 
 
@@ -31,8 +29,8 @@ window.QuotesCollection = Backbone.Collection.extend({
 // Views
 //===================================================
 
-//list of quotes
-window.QuoteOriginsListView = Backbone.View.extend({
+//list of origins
+window.OriginsListView = Backbone.View.extend({
     tagName:'ul',
 	
     initialize:function () {
@@ -48,11 +46,11 @@ window.QuoteOriginsListView = Backbone.View.extend({
     }	
 });
 
-//item in list of quotes
+//item in list of origins
 window.QuoteOriginsListItemView = Backbone.View.extend({
     tagName:"li",
 	
-    template:_.template($('#tpl-qoute_origins-list-item').html()),
+    template:_.template($('#tpl-origins-list-item').html()),
 	
 	initialize:function(){
 		this.render('test');
@@ -83,15 +81,23 @@ window.QuoteListView = Backbone.View.extend({
 
     initialize:function () {
         this.model.bind("reset", this.render, this);
-		//this.model.bind("add", function{
-		//}, this);
-		//this.model.bind("remove", function{
-		//}, this);
+		this.model.bind("sync", this.syncHandler, this);
+		this.model.bind("add", this.addHandler , this);
     },
+	
+	syncHandler:function (){
+		console.log("QuoteListView.syncHandler " + this.cid);
+	},
+	
+	addHandler: function(quote){
+		console.log("QuoteListView.addHandler - start " + this.cid);
+		$(this.el).append(new QuoteListItemView({model:quote}).el);		
+		//TODO: launch re-render of QuoteView with received ID
+	},
 
     render:function (eventName) {
-        _.each(this.model.models, function (quoteModel) {
-            $(this.el).append(new QuoteListItemView({model:quoteModel}).el);
+        _.each(this.model.models, function (quote) {
+            $(this.el).append(new QuoteListItemView({model:quote}).el);
         }, this);
         return this;
     }
@@ -104,20 +110,35 @@ window.QuoteListItemView = Backbone.View.extend({
 	template:_.template($('#tpl-qoute-list-item').html()),
 	
 	initialize:function(){
+		console.log("QuoteListItemView.initialize " + this.cid + ", model=" + this.model.cid);
 		this.model.bind("change", this.render, this);
+		this.model.bind("destroy", this.close, this);
 		this.render();
 	},
 	
 	render:function (eventName) {
+		//console.log("QuoteListItemView.render " + this.cid + ", model=" + this.model.cid);
         $(this.el).html(this.template(this.model.toJSON()));
         return this;
-    }
+    },
+	
+	close:function () {		
+		console.log("QuoteListItemView.close " + this.cid);		
+		this.remove();		
+		this.unbind();
+		this.model.unbind("change", this.render);
+		this.model.unbind("destroy", this.close);
+	}
 });
 
 
 //actions related to quotes list
 window.QuoteActionsView = Backbone.View.extend({
 	template:_.template($('#tpl-quote-actions').html()),	
+	
+	events:{
+		"click .add": "addQuote"
+	},
 	
 	initialize:function(){
 		this.render();
@@ -127,14 +148,10 @@ window.QuoteActionsView = Backbone.View.extend({
 		$(this.el).html(this.template());
 	},
 	
-	events:{
-		"click .add": "addQuote"
-	},
-	
 	addQuote:function(){		
-		app.selectedQuoteModel = new QuoteModel();
-		//if(app.quoteDetailsView) app.quoteDetailsView.close();
-		app.quoteDetailsView = new QuoteDetailsView({model:app.selectedQuoteModel});
+		app.selectedQuote = new QuoteModel();
+		if(app.quoteDetailsView)app.quoteDetailsView.close();
+		app.quoteDetailsView = new QuoteDetailsView({model:app.selectedQuote});
         $('#content').html(app.quoteDetailsView.el);		
 		return false;
 	}
@@ -145,37 +162,64 @@ window.QuoteDetailsView = Backbone.View.extend({
     template:_.template($('#tpl-quote-details').html()),
 	
 	initialize:function(){
+		console.log('QuoteDetailsView.initialize - start,  ' + this.cid + ", model=" + this.model.cid);
+		this.model.bind("destroy", this.close, this);
+		this.model.bind("sync", this.render, this);
 		this.render('test');
 	},
 	
 	events:{
-		"click .save":"save"
+		"click .save":"saveHandler",
+		"click .delete":"deleteHandler"
 	},
 	
 	render:function (eventName) {
+		//console.log('QuoteDetailsView.render - start,  ' + this.cid + ", model=" + this.model.cid);
         $(this.el).html(this.template(this.model.toJSON()));
         return this;
     },
 	
-	save:function (event){
+	saveHandler:function (){
 		this.model.set({
 			quote_text:$('#quoteText').val(),
 			language_id:$('#languageId').val(),
-			comments:$('#comments').val()
+			comments:$('#comments').val(),
+			origin_id:app.selectedOrigin.get("id")
 		});
 	
 		//creating new model
 		if(this.model.isNew()){
-			
+			console.log('QuoteDetailsView.save - creating,  ' + this.cid);
+			app.quotesCollection.create(this.model, {wait: true});
 		}
 		
 		//saving existing quote details		
 		else{
+			console.log('QuoteDetailsView.save - saving,  ' + this.cid);
 			this.model.save();
 		}
 		
 		return false;
-	}    
+	},    
+	
+	deleteHandler:function (){
+		console.log('QuoteDetailsView.delete - start,  ' + this.cid);
+		this.model.destroy({			
+			success:function(){
+				console.log('QuoteDetailsView.delete - success');
+				//TODO: ADD HISTORY GO BACK
+				//history go back
+			}
+		});
+	},
+	
+	close:function(){
+		console.log('QuoteDetailsView.close - destroy handler,  ' + this.cid);		
+		this.remove();		
+		this.unbind();		
+		this.model.unbind("destroy", this.close);
+		this.model.unbind("sync", this.render);
+	}
 });
 
 
@@ -188,27 +232,28 @@ var AppRouter = Backbone.Router.extend({
     routes:{
         "":"originsRoute",		
         "origins/:origin_id":"originDetailsRoute",
+		//TODO: ADD TREE: ORIGINS/1/QUOTES/2
 		"quotes/:id":"quoteDetailsByIdRoute",
     },
 
     originsRoute:function () {
-        this.quoteOriginsCollection = new QuoteOriginsCollection();
-        this.quoteOriginsListView = new QuoteOriginsListView({model:this.quoteOriginsCollection});
-        this.quoteOriginsCollection.fetch();
-        $('#sidebar').html(this.quoteOriginsListView.el);
+        this.originsCollection = new OriginsCollection();
+		if(app.originsListView)app.originsListView.close();
+        this.originsListView = new OriginsListView({model:this.originsCollection});
+        this.originsCollection.fetch();
+        $('#sidebar').html(this.originsListView.el);
     },
 
     originDetailsRoute:function (origin_id) {		
 		//creating origin details view
-		this.selectedOriginModel = this.quoteOriginsCollection.get(origin_id);
-		this.originDetailsView = new OriginDetailsView({model:this.selectedOriginModel});
+		this.selectedOrigin = this.originsCollection.get(origin_id);
+		this.originDetailsView = new OriginDetailsView({model:this.selectedOrigin});
 		$('#sidebardetails').html(this.originDetailsView.el);
 		
 		//creating list of quotes for current origin and fetching content from server
 		this.quotesCollection = new QuotesCollection();
-		this.quotesCollection.origin_id = origin_id;
         this.quotesListView = new QuoteListView({model:this.quotesCollection});
-		this.quotesCollection.fetch();		
+		this.quotesCollection.fetch({data: {origin_id:origin_id}});		
         $('#contentlist').html(this.quotesListView.el);
 		
 		//adding quote actions view
@@ -217,8 +262,9 @@ var AppRouter = Backbone.Router.extend({
     },	
 	
 	quoteDetailsByIdRoute:function (id) {
-		this.selectedQuoteModel = this.quotesCollection.get(id);
-        this.quoteDetailsView = new QuoteDetailsView({model:this.selectedQuoteModel});
+		this.selectedQuote = this.quotesCollection.get(id);
+		if(app.quoteDetailsView)app.quoteDetailsView.close();
+        this.quoteDetailsView = new QuoteDetailsView({model:this.selectedQuote});
         $('#content').html(this.quoteDetailsView.el);
     }	
 	
