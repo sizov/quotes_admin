@@ -1,3 +1,6 @@
+//TODO: Optimize close method boilerplate code
+
+
 //===================================================
 // Models
 //===================================================
@@ -35,7 +38,8 @@ window.OriginsListView = Backbone.View.extend({
 	
     initialize:function () {
         this.model.bind("reset", this.render, this);
-		this.render('test');
+		this.model.bind("destroy", this.close, this); //if you delete all list
+		this.render();
     },
 
     render:function (eventName) {
@@ -43,7 +47,15 @@ window.OriginsListView = Backbone.View.extend({
             $(this.el).append(new QuoteOriginsListItemView({model:quoteOriginModel}).el);
         }, this);
         return this;
-    }	
+    },	
+	
+	close:function(){
+		console.log('OriginsListView.close,  ' + this.cid);		
+		this.remove();		
+		this.unbind();		
+		this.model.unbind("reset", this.render);
+		this.model.unbind("destroy", this.close);		
+	}
 });
 
 //item in list of origins
@@ -72,6 +84,12 @@ window.OriginDetailsView = Backbone.View.extend({
 	
 	render: function(model) {
 		$(this.el).html(this.template(this.model.toJSON()));
+	},
+	
+	close:function(){
+		console.log('OriginDetailsView.close,  ' + this.cid);		
+		this.remove();		
+		this.unbind();		
 	}
 });
 
@@ -83,6 +101,7 @@ window.QuoteListView = Backbone.View.extend({
         this.model.bind("reset", this.render, this);
 		this.model.bind("sync", this.syncHandler, this);
 		this.model.bind("add", this.addHandler , this);
+		this.model.bind("destroy", this.close); //if you delete all quotes of origin
     },
 	
 	syncHandler:function (){
@@ -92,7 +111,6 @@ window.QuoteListView = Backbone.View.extend({
 	addHandler: function(quote){
 		console.log("QuoteListView.addHandler - start " + this.cid);
 		$(this.el).append(new QuoteListItemView({model:quote}).el);		
-		//TODO: launch re-render of QuoteView with received ID
 	},
 
     render:function (eventName) {
@@ -100,7 +118,17 @@ window.QuoteListView = Backbone.View.extend({
             $(this.el).append(new QuoteListItemView({model:quote}).el);
         }, this);
         return this;
-    }
+    },
+	
+	close:function(){
+		console.log('QuoteListView.close,  ' + this.cid);		
+		this.remove();		
+		this.unbind();		
+		this.model.unbind("reset", this.render, this);
+		this.model.unbind("sync", this.syncHandler, this);
+		this.model.unbind("add", this.addHandler , this);
+		this.model.unbind("destroy", this.close);
+	}
 });
 
 //item in list of quotes
@@ -154,6 +182,12 @@ window.QuoteActionsView = Backbone.View.extend({
 		app.quoteDetailsView = new QuoteDetailsView({model:app.selectedQuote});
         $('#content').html(app.quoteDetailsView.el);		
 		return false;
+	},
+	
+	close:function () {		
+		console.log("QuoteActionsView.close " + this.cid);		
+		this.remove();		
+		this.unbind();
 	}
 })
 
@@ -214,7 +248,7 @@ window.QuoteDetailsView = Backbone.View.extend({
 	},
 	
 	close:function(){
-		console.log('QuoteDetailsView.close - destroy handler,  ' + this.cid);		
+		console.log('QuoteDetailsView.close,  ' + this.cid);		
 		this.remove();		
 		this.unbind();		
 		this.model.unbind("destroy", this.close);
@@ -247,18 +281,24 @@ var AppRouter = Backbone.Router.extend({
     originDetailsRoute:function (origin_id) {		
 		//creating origin details view
 		this.selectedOrigin = this.originsCollection.get(origin_id);
+		if(app.originDetailsView)app.originDetailsView.close();
 		this.originDetailsView = new OriginDetailsView({model:this.selectedOrigin});
 		$('#sidebardetails').html(this.originDetailsView.el);
 		
 		//creating list of quotes for current origin and fetching content from server
 		this.quotesCollection = new QuotesCollection();
+		if(app.quotesListView)app.quotesListView.close();
         this.quotesListView = new QuoteListView({model:this.quotesCollection});
 		this.quotesCollection.fetch({data: {origin_id:origin_id}});		
         $('#contentlist').html(this.quotesListView.el);
 		
 		//adding quote actions view
 		this.quoteActionsView = new QuoteActionsView();
+		if(app.quoteActionsView)app.quoteActionsView.close();
 		$('#contentlistfooter').html(this.quoteActionsView.el);
+		
+		//removing quote details view
+		if(app.quoteDetailsView)app.quoteDetailsView.close();
     },	
 	
 	quoteDetailsByIdRoute:function (id) {
