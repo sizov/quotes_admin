@@ -74,6 +74,36 @@ window.QuoteOriginsListItemView = Backbone.View.extend({
     }
 });
 
+
+//actions related to origin list
+window.OriginActionsView = Backbone.View.extend({
+	template:_.template($('#tpl-origin-actions').html()),	
+	
+	initialize:function(){
+		this.render();
+	},
+	
+	events:{
+		"click .addOrigin": "addOriginHandler"
+	},
+	
+	render:function(){
+		$(this.el).html(this.template());
+	},
+	
+	addOriginHandler:function(){		
+		alert("add origin");
+		//TODO: reuse "originDetailsRoute" creation
+		return false;
+	},
+	
+	close:function () {		
+		console.log("OriginActionsView.close " + this.cid);		
+		this.remove();		
+		this.unbind();
+	}
+});
+
 //details of origin
 window.OriginDetailsView = Backbone.View.extend({
 	template:_.template($('#tpl-origin_details').html()),
@@ -165,7 +195,7 @@ window.QuoteActionsView = Backbone.View.extend({
 	template:_.template($('#tpl-quote-actions').html()),	
 	
 	events:{
-		"click .add": "addQuote"
+		"click .addQuote": "addQuoteHandler"
 	},
 	
 	initialize:function(){
@@ -176,7 +206,7 @@ window.QuoteActionsView = Backbone.View.extend({
 		$(this.el).html(this.template());
 	},
 	
-	addQuote:function(){		
+	addQuoteHandler:function(){		
 		app.selectedQuote = new QuoteModel();
 		if(app.quoteDetailsView)app.quoteDetailsView.close();
 		app.quoteDetailsView = new QuoteDetailsView({model:app.selectedQuote});
@@ -189,7 +219,7 @@ window.QuoteActionsView = Backbone.View.extend({
 		this.remove();		
 		this.unbind();
 	}
-})
+});
 
 //quote details view
 window.QuoteDetailsView = Backbone.View.extend({
@@ -271,11 +301,17 @@ var AppRouter = Backbone.Router.extend({
     },
 
     originsRoute:function () {
+		//addigorigin collection view
         this.originsCollection = new OriginsCollection();
 		if(app.originsListView)app.originsListView.close();
         this.originsListView = new OriginsListView({model:this.originsCollection});
         this.originsCollection.fetch();
         $('#sidebar').html(this.originsListView.el);
+		
+		//adding origin actions view
+		this.originActionsView = new OriginActionsView();
+		if(app.originActionsView)app.originActionsView.close();
+		$('#sidebarheader').html(this.originActionsView.el);
     },
 
     originDetailsRoute:function (origin_id) {		
@@ -295,7 +331,7 @@ var AppRouter = Backbone.Router.extend({
 		//adding quote actions view
 		this.quoteActionsView = new QuoteActionsView();
 		if(app.quoteActionsView)app.quoteActionsView.close();
-		$('#contentlistfooter').html(this.quoteActionsView.el);
+		$('#contentlistheader').html(this.quoteActionsView.el);
 		
 		//removing quote details view
 		if(app.quoteDetailsView)app.quoteDetailsView.close();

@@ -3,26 +3,32 @@
     font-size: 18px;
 }
 
+#sidebarheader {
+	position: absolute;
+    top: 10px;
+}
+
 #sidebar {
     position: absolute;
     left: 10px;
-    top: 10px;
-    bottom: 50px;
+    top: 60px;
+    bottom: 10px;
     width: 260px;
     border: solid 1px #CCCCCC;
     overflow-y: scroll;
 }
 
-#sidebarfooter {
-	position: absolute;
-    bottom: 10px;
-}
-
 #sidebardetails{
     position: absolute;
     left: 300px;
-    top: 10px;
+    top: 60px;
     height: 150px;
+}
+
+#contentlistheader{
+    position: absolute;
+    left: 300px;
+    top: 10px;
 }
 
 #contentlist{
@@ -35,18 +41,9 @@
     overflow-y: scroll;
 }
 
-#contentlistfooter{
-    position: absolute;
-    left: 300px;
-    bottom: 20px;
-    width: 260px;
-	height: 100px;
-}
-
-
 #content{
     position: absolute;
-    top: 70px;
+    top: 60px;
     bottom: 20px;
     left: 600px;
     right: 20px;
