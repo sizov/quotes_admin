@@ -91,7 +91,7 @@ window.OriginActionsView = Backbone.View.extend({
 		$(this.el).html(this.template());
 	},
 	
-	addOriginHandler:function(){		
+	addOriginHandler:function(event){		
 		alert("add origin");
 		//TODO: reuse "originDetailsRoute" creation
 		return false;
@@ -131,7 +131,7 @@ window.QuoteListView = Backbone.View.extend({
         this.model.bind("reset", this.render, this);
 		this.model.bind("sync", this.syncHandler, this);
 		this.model.bind("add", this.addHandler , this);
-		this.model.bind("destroy", this.close); //if you delete all quotes of origin
+		this.model.bind("destroy", this.close, this); //if you delete all quotes of origin
     },
 	
 	syncHandler:function (){
@@ -155,6 +155,7 @@ window.QuoteListView = Backbone.View.extend({
 		this.remove();		
 		this.unbind();		
 		this.model.unbind("reset", this.render, this);
+		//TODO: after delete exception: Uncaught TypeError: Object function (){a.apply(this,arguments)} has no method 'unbind' 
 		this.model.unbind("sync", this.syncHandler, this);
 		this.model.unbind("add", this.addHandler , this);
 		this.model.unbind("destroy", this.close);
@@ -309,8 +310,8 @@ var AppRouter = Backbone.Router.extend({
         $('#sidebar').html(this.originsListView.el);
 		
 		//adding origin actions view
-		this.originActionsView = new OriginActionsView();
 		if(app.originActionsView)app.originActionsView.close();
+		this.originActionsView = new OriginActionsView();		
 		$('#sidebarheader').html(this.originActionsView.el);
     },
 
@@ -329,8 +330,8 @@ var AppRouter = Backbone.Router.extend({
         $('#contentlist').html(this.quotesListView.el);
 		
 		//adding quote actions view
-		this.quoteActionsView = new QuoteActionsView();
 		if(app.quoteActionsView)app.quoteActionsView.close();
+		this.quoteActionsView = new QuoteActionsView();		
 		$('#contentlistheader').html(this.quoteActionsView.el);
 		
 		//removing quote details view
