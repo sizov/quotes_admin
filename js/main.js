@@ -155,7 +155,6 @@ window.QuoteListView = Backbone.View.extend({
 		this.remove();		
 		this.unbind();		
 		this.model.unbind("reset", this.render, this);
-		//TODO: after delete exception: Uncaught TypeError: Object function (){a.apply(this,arguments)} has no method 'unbind' 
 		this.model.unbind("sync", this.syncHandler, this);
 		this.model.unbind("add", this.addHandler , this);
 		this.model.unbind("destroy", this.close);
@@ -176,8 +175,7 @@ window.QuoteListItemView = Backbone.View.extend({
 	},
 	
 	render:function (eventName) {
-		//console.log("QuoteListItemView.render " + this.cid + ", model=" + this.model.cid);
-        $(this.el).html(this.template(this.model.toJSON()));
+		$(this.el).html(this.template(this.model.toJSON()));
         return this;
     },
 	
@@ -272,8 +270,7 @@ window.QuoteDetailsView = Backbone.View.extend({
 		this.model.destroy({			
 			success:function(){
 				console.log('QuoteDetailsView.delete - success');
-				//TODO: ADD HISTORY GO BACK
-				//history go back
+				window.history.back();
 			}
 		});
 	},
@@ -297,8 +294,7 @@ var AppRouter = Backbone.Router.extend({
     routes:{
         "":"originsRoute",		
         "origins/:origin_id":"originDetailsRoute",
-		//TODO: ADD TREE: ORIGINS/1/QUOTES/2
-		"quotes/:id":"quoteDetailsByIdRoute",
+		"origins/:origin_id/quotes/:id":"quoteDetailsByIdRoute",
     },
 
     originsRoute:function () {
@@ -338,8 +334,8 @@ var AppRouter = Backbone.Router.extend({
 		if(app.quoteDetailsView)app.quoteDetailsView.close();
     },	
 	
-	quoteDetailsByIdRoute:function (id) {
-		this.selectedQuote = this.quotesCollection.get(id);
+	quoteDetailsByIdRoute:function (originId, quoteId) {
+		this.selectedQuote = this.quotesCollection.get(quoteId);
 		if(app.quoteDetailsView)app.quoteDetailsView.close();
         this.quoteDetailsView = new QuoteDetailsView({model:this.selectedQuote});
         $('#content').html(this.quoteDetailsView.el);
