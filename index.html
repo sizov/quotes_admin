@@ -7,67 +7,81 @@
 
 <body>
 
-<div id="sidebarheader"></div>
-
 <div id="sidebar"></div>
+<div id="content1"></div>
+<div id="content2"></div>
 
-<div id="contentlistheader"></div>
-
-<div id="sidebardetails"></div>
-
-<div id="contentlist"></div>
-
-<div id="content"></div>
-
-<!--------------->
+<!-- ==============================-->
 <!-- Templates -->
-<!--------------->
+<!-- ==============================-->
 
-<script type="text/template" id="tpl-origin-actions">
+<script type="text/template" id="tpl-origins-list">	
 	<button class="addOrigin">Add Origin</button>
-</script>
-
-<script type="text/template" id="tpl-quote-actions">
-	<button class="addQuote">Add Quote</button>
+	<ul id="originsList"></ul>
 </script>
 
 <script type="text/template" id="tpl-origins-list-item">	
 	<a href='#origins/<%= id %>'><%= origin_text %></a>
 </script>
 
-<script type="text/template" id="tpl-origin_details">
-	<label>Id:</label>
-	<input type="text" id="id" name="id" value="<%= id %>" disabled />
+<script type="text/template" id="tpl-origin">
+	<button class="saveOrigin">Save Origin</button>
+	<button class="deleteOrigin">Delete Origin</button>	
+	<label>Id:</label>		
+	<input type="text" id="originId" name="id" value="<%= id === null ? '' : id %>" disabled/>
 	<label>Origin text:</label>
-	<input type="text" id="name" name="text" value="<%= origin_text %>" required/>
+	<input type="text" id="originText" name="text" value="<%= origin_text %>" required/>		
+	<label>Origin type:</label>
+	<input type="text" id="originTypeId" name="text" value="<%= type_id %>" required/>		
+	<div id="quotesListHolder"></div>
 </script>
 
-<script type="text/template" id="tpl-qoute-list-item">
+<script type="text/template" id="tpl-quotes-list">
+	<button class="addQuote">Add Quote</button>
+	<ul id="quotesList"></ul>
+</script>
+
+<script type="text/template" id="tpl-quotes-list-item">
 	<a href='#origins/<%= origin_id %>/quotes/<%= id %>'><%= quote_text %></a>
 </script>
 
-<script type="text/template" id="tpl-quote-details">
-    <div class="form-left-col">
-        <label>Id:</label>
-        <input type="text" id="quoteId" name="id" value="<%= id %>" disabled />
-        <label>Quote text:</label>
-        <input type="text" id="quoteText" name="name" value="<%= quote_text %>" required/>
-        <label>Language:</label>
-        <input type="text" id="languageId" name="grapes" value="<%= language_id %>"/>		
-        <label>Comments:</label>
-        <textarea id="comments" name="description"><%= comments %></textarea>
-		<button class="save">Save</button>
-		<button class="delete">Delete</button>
-    </div>
-	
+<script type="text/template" id="tpl-quote">
+	<button class="save">Save Quote</button>
+	<button class="delete">Delete Quote</button>	
+	<label>Id:</label>
+	<input type="text" id="quoteId" name="id" value="<%= id %>" disabled />
+	<label>Quote text:</label>
+	<input type="text" id="quoteText" name="name" value="<%= quote_text %>" required/>
+	<label>Language:</label>
+	<input type="text" id="languageId" name="grapes" value="<%= language_id %>"/>		
+	<label>Comments:</label>
+	<textarea id="comments" name="description"><%= comments %></textarea>		
 </script>
-<!--------------->
 
 
+<!-- ==============================-->
 <!-- JavaScript -->
+<!-- ==============================-->
+
+<!-- libs -->
 <script src="lib/jquery-1.7.1.min.js"></script>
 <script src="lib/underscore-min.js"></script>
-<script src="lib/backbone-min.js"></script>
+<script src="lib/backbone.js"></script>
+<!--<script src="lib/backbone-min.js"></script>-->
+
+<!-- app -->
+<script src="js/models/quoteModel.js"></script>   
+<script src="js/models/quotesCollection.js"></script> 
+<script src="js/models/originModel.js"></script>   
+<script src="js/models/originsCollection.js"></script>  
+
+<script src="js/views/quotesListItemView.js"></script>    
+<script src="js/views/quotesListView.js"></script>   
+<script src="js/views/quoteView.js"></script>   
+<script src="js/views/originsListItemView.js"></script>  
+<script src="js/views/originsListView.js"></script>  
+<script src="js/views/originView.js"></script>   
+
 <script src="js/main.js"></script>   
 
 </body>

@@ -3,58 +3,25 @@
     font-size: 18px;
 }
 
-#sidebarheader {
-	position: absolute;
-    top: 10px;
-}
-
 #sidebar {
     position: absolute;
     left: 10px;
-    top: 60px;
-    bottom: 10px;
+    top: 10px;
     width: 260px;
-    border: solid 1px #CCCCCC;
-    overflow-y: scroll;
 }
 
-#sidebardetails{
-    position: absolute;
-    left: 300px;
-    top: 60px;
-    height: 150px;
-}
-
-#contentlistheader{
+#content1 {
     position: absolute;
     left: 300px;
     top: 10px;
-}
-
-#contentlist{
-    position: absolute;
-    left: 300px;
-    top: 240px;
-    bottom: 120px;
     width: 260px;
-    border: solid 1px #CCCCCC;
-    overflow-y: scroll;
 }
 
-#content{
+#content2 {
     position: absolute;
-    top: 60px;
-    bottom: 20px;
+    top: 10px;
     left: 600px;
     right: 20px;
-}
-
-.form-left-col {
-    width: 310px;
-    float: left;
-}
-
-.form-right-col {
 }
 
 .title {
@@ -63,6 +30,7 @@
 }
 
 ul {
+	border: solid 1px #aaaaaa;
     list-style-type: none;
     padding-left: 0px;
     margin-top: 0px;
@@ -85,12 +53,6 @@ input, textarea {
     border: 1px solid #ccc;
     min-height: 30px;
     outline: none;
-}
-
-.form-left-col input {
-    margin-bottom: 15px;
-    margin-top: 5px;
-    width: 280px;
 }
 
 textarea {
