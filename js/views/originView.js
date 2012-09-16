@@ -4,35 +4,34 @@ window.OriginView = Backbone.View.extend({
 	
 	events:{
 		"click .deleteOrigin": "deleteOriginHandler",
-		"click .saveOrigin": "saveOriginHandler"
+		"click .saveOrigin": "saveOriginHandler",		
+		"click .addQuote": "addQuoteHandler"
 	},
 	
 	initialize: function() {
-		console.log('OriginView.close,  ' + this.cid);		
-	
+		console.log('OriginView.initialize,  ' + this.cid+this.el);			
+		
+		this.model.bind("destroy", this.close, this);
+		this.model.bind("sync", this.render, this);
+		
 		this.render(this.model);
-		
-//TODO: maybe it's not the best idea to create models from view, do that from router? parent model?
-		
-		//creating list of quotes for current origin and fetching content from server		
-//TODO: should we remove bindings from old collection?		
-		app.quotesCollection = new QuotesCollection();
-		app.quotesCollection.fetch({data: {origin_id:this.model.id}});		
-		
-		if(this.quotesListView)this.quotesListView.close();
-        this.quotesListView = new QuotesListView({model:app.quotesCollection, origin_id:this.model.id});
-		
-		this.$('#quotesListHolder').html(this.quotesListView.el);
 	},
 	
 	render: function(model) {
-//TODO: if we are going to reuse this view (not create new each time), then we have to set QuoteView here, not in "initialize"
+		console.log('OriginView.render - start,  ' + this.cid);
+	
 		$(this.el).html(this.template(this.model.toJSON()));				
 	},
 	
 	deleteOriginHandler:function(){		
-		alert("deleting origin");
-		return false;
+		console.log('OriginView.delete - start,  ' + this.cid);
+		
+		this.model.destroy({			
+			success:function(){
+				console.log('OriginView.delete - success');
+				window.history.back();
+			}
+		});
 	},
 	
 	saveOriginHandler:function(){		
@@ -56,13 +55,20 @@ window.OriginView = Backbone.View.extend({
 		return false;
 	},   
 	
+	addQuoteHandler:function(){			
+		app.navigate('origins/'+this.model.id+'/quotes/new', true);		
+		return false;
+	},	
+	
+
+	
 	close:function(){
 		console.log('OriginView.close,  ' + this.cid);		
 		
-//TODO: remove and unbind QuotesListView				
-		this.quotesListView.close();
-		
 		this.remove();		
-		this.unbind();		
+		this.unbind();	
+
+		this.model.unbind("destroy", this.close);
+		this.model.unbind("sync", this.render);		
 	}
 });

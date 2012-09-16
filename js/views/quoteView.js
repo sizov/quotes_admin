@@ -3,8 +3,8 @@ window.QuoteView = Backbone.View.extend({
     template:_.template($('#tpl-quote').html()),
 	
 	events:{
-		"click .save":"saveHandler",
-		"click .delete":"deleteHandler"
+		"click .saveQuote":"saveHandler",
+		"click .deleteQuote":"deleteHandler"
 	},
 	
 	initialize:function(){
@@ -12,11 +12,11 @@ window.QuoteView = Backbone.View.extend({
 		
 		this.model.bind("destroy", this.close, this);
 		this.model.bind("sync", this.render, this);
-		this.render('test');
+		
+		this.render();
 	},
 	
-	render:function (eventName) {
-		//console.log('QuoteDetailsView.render - start,  ' + this.cid + ", model=" + this.model.cid);
+	render:function () {
         $(this.el).html(this.template(this.model.toJSON()));
         return this;
     },
@@ -26,7 +26,7 @@ window.QuoteView = Backbone.View.extend({
 			quote_text:$('#quoteText').val(),
 			language_id:$('#languageId').val(),
 			comments:$('#comments').val(),
-			origin_id:app.selectedOrigin.get("id")
+			origin_id:app.originModel.get("id")
 		});
 	
 		//creating new model
@@ -56,8 +56,10 @@ window.QuoteView = Backbone.View.extend({
 	
 	close:function(){
 		console.log('QuoteView.close,  ' + this.cid);		
+		
 		this.remove();		
 		this.unbind();		
+		
 		this.model.unbind("destroy", this.close);
 		this.model.unbind("sync", this.render);
 	}

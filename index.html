@@ -27,6 +27,7 @@
 <script type="text/template" id="tpl-origin">
 	<button class="saveOrigin">Save Origin</button>
 	<button class="deleteOrigin">Delete Origin</button>	
+	<button class="addQuote">Add Quote</button>
 	<label>Id:</label>		
 	<input type="text" id="originId" name="id" value="<%= id === null ? '' : id %>" disabled/>
 	<label>Origin text:</label>
@@ -36,8 +37,8 @@
 	<div id="quotesListHolder"></div>
 </script>
 
-<script type="text/template" id="tpl-quotes-list">
-	<button class="addQuote">Add Quote</button>
+<script type="text/template" id="tpl-quotes-list">	
+	<label>Quotes:</label>
 	<ul id="quotesList"></ul>
 </script>
 
@@ -46,8 +47,8 @@
 </script>
 
 <script type="text/template" id="tpl-quote">
-	<button class="save">Save Quote</button>
-	<button class="delete">Delete Quote</button>	
+	<button class="saveQuote">Save Quote</button>
+	<button class="deleteQuote">Delete Quote</button>	
 	<label>Id:</label>
 	<input type="text" id="quoteId" name="id" value="<%= id %>" disabled />
 	<label>Quote text:</label>
@@ -64,7 +65,7 @@
 <!-- ==============================-->
 
 <!-- libs -->
-<script src="lib/jquery-1.7.1.min.js"></script>
+<script src="lib/jquery-1.8.1.js"></script>
 <script src="lib/underscore-min.js"></script>
 <script src="lib/backbone.js"></script>
 <!--<script src="lib/backbone-min.js"></script>-->
