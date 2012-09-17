@@ -32,7 +32,13 @@ window.QuoteView = Backbone.View.extend({
 		//creating new model
 		if(this.model.isNew()){
 			console.log('QuoteDetailsView.save - creating,  ' + this.cid);
-			app.quotesCollection.create(this.model, {wait: true});
+			app.quotesCollection.create(this.model, {
+				wait: true,
+				success:function(model, response){
+					console.log('QuoteDetailsView.create success,  ' + this.cid);
+					app.navigate('origins/'+app.originModel.get('originId')+'/quotes/'+model.get("id"), true);
+				}
+			});
 		}
 		
 		//saving existing quote details		

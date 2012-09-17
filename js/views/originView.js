@@ -9,7 +9,7 @@ window.OriginView = Backbone.View.extend({
 	},
 	
 	initialize: function() {
-		console.log('OriginView.initialize,  ' + this.cid+this.el);			
+		console.log('OriginView.initialize,  ' + this.cid);			
 		
 		this.model.bind("destroy", this.close, this);
 		this.model.bind("sync", this.render, this);
@@ -18,8 +18,6 @@ window.OriginView = Backbone.View.extend({
 	},
 	
 	render: function(model) {
-		console.log('OriginView.render - start,  ' + this.cid);
-	
 		$(this.el).html(this.template(this.model.toJSON()));				
 	},
 	

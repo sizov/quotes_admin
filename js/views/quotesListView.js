@@ -11,7 +11,7 @@ window.QuotesListView = Backbone.View.extend({
     },	
 			
 	addCollectionElementHandler: function(quoteModel){
-		console.log("QuotesListView.addHandler - start " + this.cid);
+		console.log("QuotesListView.addCollectionElementHandler - start " + this.cid);
 		this.$("#quotesList").append(new QuotesListItemView({model:quoteModel}).el);		
 	},
 
@@ -26,11 +26,12 @@ window.QuotesListView = Backbone.View.extend({
 	
 	close:function(){
 		console.log('QuoteListView.close,  ' + this.cid);		
+		
 		this.remove();		
 		this.unbind();		
+		
 		this.model.unbind("reset", this.render, this);
-		this.model.unbind("sync", this.syncHandler, this);
-		this.model.unbind("add", this.addHandler , this);
+		this.model.unbind("add", this.addCollectionElementHandler , this);
 		this.model.unbind("destroy", this.close);
 	}
 });
