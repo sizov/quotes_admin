@@ -4,6 +4,10 @@ window.QuotesListItemView = Backbone.View.extend({
 	
 	template:_.template($('#tpl-quotes-list-item').html()),
 	
+	events:{
+		"click a": "navigateToQuote"
+	},
+	
 	initialize:function(){
 		console.log("QuotesListItemView.initialize " + this.cid + ", model=" + this.model.cid);
 		
@@ -17,6 +21,11 @@ window.QuotesListItemView = Backbone.View.extend({
 		$(this.el).html(this.template(this.model.toJSON()));
         return this;
     },
+	
+	navigateToQuote:function(event){
+		event.preventDefault();
+		app.navigate('origins/'+app.originModel.get('id')+'/quotes/'+this.model.get('id'), true);		
+	},
 	
 	close:function () {		
 		console.log("QuotesListItemView.close " + this.cid);		

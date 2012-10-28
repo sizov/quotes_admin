@@ -3,21 +3,28 @@
     font-size: 18px;
 }
 
-#sidebar {
+#originListContainer {
     position: absolute;
     left: 10px;
     top: 10px;
     width: 260px;
 }
 
-#content1 {
+#originContainer {
     position: absolute;
     left: 300px;
     top: 10px;
     width: 260px;
 }
 
-#content2 {
+#quoteListContainer {
+    position: absolute;
+    left: 300px;
+    top: 300px;
+    width: 260px;
+}
+
+#quoteContainer {
     position: absolute;
     top: 10px;
     left: 600px;

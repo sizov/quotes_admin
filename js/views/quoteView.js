@@ -3,8 +3,11 @@ window.QuoteView = Backbone.View.extend({
     template:_.template($('#tpl-quote').html()),
 	
 	events:{
-		"click .saveQuote":"saveHandler",
-		"click .deleteQuote":"deleteHandler"
+		"click .deleteQuote":"deleteHandler",
+		
+		"change #quoteText":"quoteTextChangeHandler",
+		"change #quoteLanguageId":"languageIdChangeHandler",
+		"change #comments":"commentsChangeHandler",
 	},
 	
 	initialize:function(){
@@ -21,34 +24,23 @@ window.QuoteView = Backbone.View.extend({
         return this;
     },
 	
-	saveHandler:function (){
-		this.model.set({
-			quote_text:$('#quoteText').val(),
-			language_id:$('#languageId').val(),
-			comments:$('#comments').val(),
-			origin_id:app.originModel.get("id")
-		});
+	quoteTextChangeHandler:function(){
+		this.updateModelProperty("quote_text", $('#quoteText').val());		
+	},
 	
-		//creating new model
-		if(this.model.isNew()){
-			console.log('QuoteDetailsView.save - creating,  ' + this.cid);
-			app.quotesCollection.create(this.model, {
-				wait: true,
-				success:function(model, response){
-					console.log('QuoteDetailsView.create success,  ' + this.cid);
-					app.navigate('origins/'+app.originModel.get('originId')+'/quotes/'+model.get("id"), true);
-				}
-			});
-		}
-		
-		//saving existing quote details		
-		else{
-			console.log('QuoteDetailsView.save - saving,  ' + this.cid);
-			this.model.save();
-		}
-		
-		return false;
-	},    
+	languageIdChangeHandler:function(){
+		this.updateModelProperty("language_id", parseInt($('#quoteLanguageId').val(), 10));		
+	},
+	
+	commentsChangeHandler:function(){
+		this.updateModelProperty("comments", $('#comments').val());		
+	},
+	
+	updateModelProperty:function(property, value){
+		var update = {};
+		update[property] = value;
+		this.model.set(update);
+	},	
 	
 	deleteHandler:function (){
 		console.log('QuoteView.delete - start,  ' + this.cid);

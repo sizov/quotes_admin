@@ -37,12 +37,13 @@ function updateOriginById($origin_id) {
 	$request = Slim::getInstance()->request();
 	$body = $request->getBody();
 	$origin = json_decode($body);
-	$sql = "UPDATE quote_origins SET origin_text=:origin_text, type_id=:type_id WHERE id=:origin_id";
+	$sql = "UPDATE quote_origins SET origin_text=:origin_text, type_id=:type_id, language_id=:language_id WHERE id=:origin_id";
 	try {
 		$db = getConnection();
 		$stmt = $db->prepare($sql);  
 		$stmt->bindParam("origin_text", $origin->origin_text);
 		$stmt->bindParam("type_id", $origin->type_id);
+		$stmt->bindParam("language_id", $origin->language_id);
 		$stmt->bindParam("origin_id", $origin_id);
 		$stmt->execute();
 		$db = null;

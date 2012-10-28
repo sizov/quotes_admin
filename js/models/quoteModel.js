@@ -3,7 +3,7 @@ window.QuoteModel = Backbone.Model.extend({
 	defaults:{
 		id:null,
 		quote_text:"New Quote",
-		language_id:1,
+		language_id:0,
 		comments:null
 	}	
 });

@@ -1,6 +1,10 @@
 //list of quotes
 window.QuotesListView = Backbone.View.extend({
 	template:_.template($('#tpl-quotes-list').html()),
+	
+	events:{
+		"click .addQuote": "addQuoteHandler"
+	},
 
     initialize:function () {
 		console.log('QuotesListView.initialize,  ' + this.cid);		
@@ -8,13 +12,20 @@ window.QuotesListView = Backbone.View.extend({
         this.model.bind("reset", this.render, this);
 		this.model.bind("add", this.addCollectionElementHandler , this);
 		this.model.bind("destroy", this.close, this); //if you delete all quotes of origin
+		
+		this.render();
     },	
 			
 	addCollectionElementHandler: function(quoteModel){
 		console.log("QuotesListView.addCollectionElementHandler - start " + this.cid);
 		this.$("#quotesList").append(new QuotesListItemView({model:quoteModel}).el);		
 	},
-
+	
+	addQuoteHandler:function(){			
+		app.navigate('origins/'+app.originModel.get('id')+'/quotes/new', true);		
+		return false;
+	},	
+	
     render:function (eventName) {
 		$(this.el).html(this.template());
 	

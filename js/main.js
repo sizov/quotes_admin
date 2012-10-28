@@ -1,4 +1,3 @@
-//TODO: Optimize close method boilerplate code
 //TODO: do not generate views each time - show/hide and reset data each time instead
 
 var AppRouter = Backbone.Router.extend({
@@ -65,7 +64,7 @@ var AppRouter = Backbone.Router.extend({
 		this.originsCollection.fetch();
 		this.originsListView = new OriginsListView({model:this.originsCollection}); 
 		
-		$('#sidebar').html(this.originsListView.el);				
+		$('#originListContainer').html(this.originsListView.el);				
     },
 
     originDetailsRoute:function (originId) {
@@ -86,7 +85,7 @@ var AppRouter = Backbone.Router.extend({
 		this.originModel = originModel;
 		this.originView = new OriginView({model:this.originModel});
 		
-		$('#content1').html(this.originView.el);				
+		$('#originContainer').html(this.originView.el);				
 		
 		// initializing quotes list
 		this.quotesCollection = new QuotesCollection();
@@ -97,11 +96,11 @@ var AppRouter = Backbone.Router.extend({
 		}		
 		this.quotesListView = new QuotesListView({model:this.quotesCollection});	
 		
-		$('#quotesListHolder').html(this.quotesListView.el);		
+		$('#quoteListContainer').html(this.quotesListView.el);		
 	},
 	
 	createNewQuoteByIdRoute:function (originId) {
-		this.setQuoteById(originId, new QuoteModel());
+		this.setQuoteById(originId, new QuoteModel({origin_id:originId}));
 	},
 	
 	quoteByIdRoute:function (originId, quoteId) {
@@ -114,9 +113,9 @@ var AppRouter = Backbone.Router.extend({
 		this.closeQuoteModelAndView();
 		
 		this.quoteModel = quoteModel;
-		this.quoteView = new QuoteView({model:this.quoteModel, originId:originId});
+		this.quoteView = new QuoteView({model:this.quoteModel});
 
-        $('#content2').html(this.quoteView.el);
+        $('#quoteContainer').html(this.quoteView.el);
     }	
 	
 });

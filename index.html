@@ -7,9 +7,10 @@
 
 <body>
 
-<div id="sidebar"></div>
-<div id="content1"></div>
-<div id="content2"></div>
+<div id="originListContainer"></div>
+<div id="originContainer"></div>
+<div id="quoteListContainer"></div>
+<div id="quoteContainer"></div>
 
 <!-- ==============================-->
 <!-- Templates -->
@@ -17,6 +18,7 @@
 
 <script type="text/template" id="tpl-origins-list">	
 	<button class="addOrigin">Add Origin</button>
+	<label>Origins:</label>
 	<ul id="originsList"></ul>
 </script>
 
@@ -26,18 +28,19 @@
 
 <script type="text/template" id="tpl-origin">
 	<button class="saveOrigin">Save Origin</button>
-	<button class="deleteOrigin">Delete Origin</button>	
-	<button class="addQuote">Add Quote</button>
+	<button class="deleteOrigin">Delete Origin</button>		
 	<label>Id:</label>		
 	<input type="text" id="originId" name="id" value="<%= id === null ? '' : id %>" disabled/>
 	<label>Origin text:</label>
 	<input type="text" id="originText" name="text" value="<%= origin_text %>" required/>		
 	<label>Origin type:</label>
 	<input type="text" id="originTypeId" name="text" value="<%= type_id %>" required/>		
-	<div id="quotesListHolder"></div>
+	<label>Language:</label>
+	<input type="text" id="originLanguageId" name="grapes" value="<%= language_id %>"/>		
 </script>
 
 <script type="text/template" id="tpl-quotes-list">	
+	<button class="addQuote">Add Quote</button>
 	<label>Quotes:</label>
 	<ul id="quotesList"></ul>
 </script>
@@ -47,14 +50,13 @@
 </script>
 
 <script type="text/template" id="tpl-quote">
-	<button class="saveQuote">Save Quote</button>
 	<button class="deleteQuote">Delete Quote</button>	
 	<label>Id:</label>
 	<input type="text" id="quoteId" name="id" value="<%= id %>" disabled />
 	<label>Quote text:</label>
 	<input type="text" id="quoteText" name="name" value="<%= quote_text %>" required/>
 	<label>Language:</label>
-	<input type="text" id="languageId" name="grapes" value="<%= language_id %>"/>		
+	<input type="text" id="quoteLanguageId" name="grapes" value="<%= language_id %>"/>		
 	<label>Comments:</label>
 	<textarea id="comments" name="description"><%= comments %></textarea>		
 </script>
